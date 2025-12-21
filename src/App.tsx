@@ -435,7 +435,7 @@ function App() {
                   </div>
                   <Button
                     type="button"
-                    className="h-10 border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 shadow-sm shadow-rose-200 hover:border-rose-300 hover:bg-rose-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500/70"
+                    className="h-10 border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 shadow-sm shadow-rose-200 hover:border-rose-300 hover:bg-rose-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500/70 cursor-pointer"
                     onClick={resetForm}
                   >
                     Reset form
@@ -585,135 +585,95 @@ function App() {
                       </div>
                     </div>
                   </div>
-                  <div
-                    className="signature-preview space-y-4 bg-white px-6 py-6 text-slate-900"
-                    ref={previewRef}
-                  >
-                    <div className="space-y-2 text-[13px] leading-relaxed text-slate-700">
-                      <p className="m-0">Hi there,</p>
-                      <p className="m-0">
+                  <div>
+                    <div
+                      style={{
+                        backgroundColor: "#ffffff",
+                        padding: 24,
+                        fontFamily: "Segoe UI, sans-serif",
+                        fontSize: 12,
+                        lineHeight: 1.4,
+                        color: "#181127",
+                        marginBottom: 12,
+                      }}
+                    >
+                      <p style={{ margin: 0 }}>Hi there,</p>
+                      <p style={{ margin: 0 }}>
                         Here's the latest signature block. It updates live as
                         you tweak the fields on the left.
                       </p>
-                      <p className="m-0">Thanks!</p>
+                      <p style={{ margin: 0 }}>Thanks!</p>
                     </div>
-                    <table
-                      cellPadding={0}
-                      cellSpacing={0}
-                      className="w-full"
+                    <div
+                      ref={previewRef}
                       style={{
-                        fontFamily: "Segoe UI",
+                        backgroundColor: "#ffffff",
+                        padding: 24,
+                        fontFamily: "Segoe UI, sans-serif",
                         fontSize: 12,
-                        verticalAlign: "middle",
+                        lineHeight: 1.4,
+                        color: "#181127",
                       }}
                     >
-                      <tbody>
-                        <tr>
-                          <td>
-                            <table
-                              cellPadding={0}
-                              cellSpacing={0}
-                              className="w-full"
-                            >
-                              <tbody>
-                                <tr>
-                                  <td style={{ verticalAlign: "middle" }}>
-                                    <h3 className="m-0 text-[17px] font-medium text-[#181127]">
-                                      <span id="footer-naam">
-                                        {trimmedValues.name}
-                                      </span>
-                                    </h3>
-                                    <p className="m-0 text-[12px] leading-[22px] text-[#181127]">
-                                      <span id="footer-functie">
-                                        {trimmedValues.role}
-                                      </span>
-                                    </p>
-                                  </td>
-                                  <td className="px-3">
-                                    <span className="block h-full w-px border-l border-[#283e89]" />
-                                  </td>
-                                  <td style={{ verticalAlign: "middle" }}>
-                                    <table
-                                      cellPadding={0}
-                                      cellSpacing={0}
-                                      className="w-full"
+                      <table
+                        cellPadding={0}
+                        cellSpacing={0}
+                        style={{
+                          width: "100%",
+                          fontFamily: "inherit",
+                          fontSize: "inherit",
+                          borderCollapse: "collapse",
+                        }}
+                      >
+                        <tbody>
+                          <tr>
+                            <td>
+                              <table
+                                cellPadding={0}
+                                cellSpacing={0}
+                                style={{ width: "100%" }}
+                              >
+                                <tbody>
+                                  <tr>
+                                    <td style={{ verticalAlign: "middle" }}>
+                                      <h3
+                                        style={{
+                                          margin: 0,
+                                          fontSize: 17,
+                                          fontWeight: 500,
+                                          color: "#181127",
+                                        }}
+                                      >
+                                        <span id="footer-naam">
+                                          {trimmedValues.name}
+                                        </span>
+                                      </h3>
+                                      <p
+                                        style={{
+                                          margin: 0,
+                                          fontSize: 12,
+                                          lineHeight: "22px",
+                                          color: "#181127",
+                                        }}
+                                      >
+                                        <span id="footer-functie">
+                                          {trimmedValues.role}
+                                        </span>
+                                      </p>
+                                    </td>
+                                    <td
+                                      style={{
+                                        verticalAlign: "middle",
+                                        borderLeft: "1px solid #283e89",
+                                        paddingLeft: 16,
+                                      }}
                                     >
-                                      <tbody>
-                                        <tr
-                                          style={{
-                                            verticalAlign: "middle",
-                                            height: 25,
-                                          }}
-                                        >
-                                          <td
-                                            width={30}
-                                            className="align-middle"
-                                          >
-                                            <img
-                                              src={`${RAW_ASSET_BASE}/phone.png`}
-                                              width={20}
-                                              height={20}
-                                              alt="Phone"
-                                              className="tint-blue"
-                                            />
-                                          </td>
-                                          <td className="align-middle text-[12px] text-[#181127]">
-                                            <a
-                                              id="link-gsm"
-                                              href={
-                                                trimmedValues.phone
-                                                  ? `tel:${trimmedValues.phone}`
-                                                  : ""
-                                              }
-                                              style={{
-                                                textDecoration: "none",
-                                                color: "#181127",
-                                              }}
-                                            >
-                                              <span id="footer-gsm">
-                                                {trimmedValues.phone}
-                                              </span>
-                                            </a>
-                                          </td>
-                                        </tr>
-                                        <tr
-                                          style={{
-                                            verticalAlign: "middle",
-                                            height: 25,
-                                          }}
-                                        >
-                                          <td
-                                            width={30}
-                                            className="align-middle"
-                                          >
-                                            <img
-                                              src={`${RAW_ASSET_BASE}/mail.png`}
-                                              width={20}
-                                              height={20}
-                                              alt="Email"
-                                              className="tint-blue"
-                                            />
-                                          </td>
-                                          <td className="align-middle text-[12px] text-[#181127]">
-                                            <a
-                                              id="link-email"
-                                              href={
-                                                trimmedValues.email
-                                                  ? `mailto:${trimmedValues.email}`
-                                                  : ""
-                                              }
-                                              style={{
-                                                textDecoration: "none",
-                                                color: "#181127",
-                                              }}
-                                            >
-                                              <span id="footer-email">
-                                                {trimmedValues.email}
-                                              </span>
-                                            </a>
-                                          </td>
-                                        </tr>
-                                        {trimmedValues.websiteUrl && (
+                                      <table
+                                        cellPadding={0}
+                                        cellSpacing={0}
+                                        style={{ width: "100%" }}
+                                      >
+                                        <tbody>
                                           <tr
                                             style={{
                                               verticalAlign: "middle",
@@ -722,60 +682,43 @@ function App() {
                                           >
                                             <td
                                               width={30}
-                                              className="align-middle"
+                                              style={{
+                                                verticalAlign: "middle",
+                                              }}
                                             >
                                               <img
-                                                src={`${RAW_ASSET_BASE}/globe.png`}
+                                                src={`${RAW_ASSET_BASE}/phone.png`}
                                                 width={20}
                                                 height={20}
-                                                alt="Website"
-                                                className="tint-blue"
+                                                alt="Phone"
+                                                style={{ display: "block" }}
                                               />
                                             </td>
-                                            <td className="align-middle text-[12px] text-[#181127]">
+                                            <td
+                                              style={{
+                                                verticalAlign: "middle",
+                                                fontSize: 12,
+                                              }}
+                                            >
                                               <a
-                                                id="link-website"
-                                                href={trimmedValues.websiteUrl}
+                                                id="link-gsm"
+                                                href={
+                                                  trimmedValues.phone
+                                                    ? `tel:${trimmedValues.phone}`
+                                                    : ""
+                                                }
                                                 style={{
                                                   textDecoration: "none",
                                                   color: "#181127",
                                                 }}
                                               >
-                                                <span id="footer-website">
-                                                  {trimmedValues.websiteLabel ||
-                                                    trimmedValues.websiteUrl}
+                                                <span id="footer-gsm">
+                                                  {trimmedValues.phone}
                                                 </span>
                                               </a>
                                             </td>
                                           </tr>
-                                        )}
-                                        <tr
-                                          style={{
-                                            verticalAlign: "middle",
-                                            height: 25,
-                                          }}
-                                        >
-                                          <td
-                                            width={30}
-                                            className="align-middle"
-                                          >
-                                            <img
-                                              src={`${RAW_ASSET_BASE}/building.png`}
-                                              width={20}
-                                              height={20}
-                                              alt="Location"
-                                              className="tint-blue"
-                                            />
-                                          </td>
-                                          <td className="align-middle text-[12px] text-[#181127]">
-                                            <span id="footer-locatie-1">
-                                              {trimmedValues.location1}
-                                            </span>
-                                          </td>
-                                        </tr>
-                                        {trimmedValues.location2 && (
                                           <tr
-                                            id="footer-locatie-2-container"
                                             style={{
                                               verticalAlign: "middle",
                                               height: 25,
@@ -783,138 +726,276 @@ function App() {
                                           >
                                             <td
                                               width={30}
-                                              className="align-middle"
-                                            />
-                                            <td className="align-middle text-[12px] text-[#181127]">
-                                              <span id="footer-locatie-2">
-                                                {trimmedValues.location2}
-                                              </span>
+                                              style={{
+                                                verticalAlign: "middle",
+                                              }}
+                                            >
+                                              <img
+                                                src={`${RAW_ASSET_BASE}/mail.png`}
+                                                width={20}
+                                                height={20}
+                                                alt="Email"
+                                                style={{ display: "block" }}
+                                              />
                                             </td>
-                                          </tr>
-                                        )}
-                                      </tbody>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <table
-                              cellPadding={0}
-                              cellSpacing={0}
-                              className="w-full"
-                              style={{ marginTop: 5 }}
-                            >
-                              <tbody>
-                                <tr>
-                                  <td>
-                                    <a
-                                      href="https://upshift.be"
-                                      target="_blank"
-                                      rel="noreferrer"
-                                    >
-                                      <img
-                                        src={`${RAW_ASSET_BASE}/upshift_logo.png`}
-                                        width={100}
-                                        alt="Upshift"
-                                        style={{ maxHeight: 50, width: "auto" }}
-                                      />
-                                    </a>
-                                  </td>
-                                  <td
-                                    className="text-right align-bottom"
-                                    style={{ paddingBottom: 2 }}
-                                  >
-                                    <table
-                                      cellPadding={0}
-                                      cellSpacing={0}
-                                      className="inline-flex items-center text-right"
-                                    >
-                                      <tbody>
-                                        <tr>
-                                          {[
-                                            {
-                                              id: "facebook",
-                                              icon: "facebook.png",
-                                              href: trimmedValues.facebook,
-                                            },
-                                            {
-                                              id: "linkedin",
-                                              icon: "linkedin.png",
-                                              href: trimmedValues.linkedin,
-                                            },
-                                            {
-                                              id: "instagram",
-                                              icon: "instagram.png",
-                                              href: trimmedValues.instagram,
-                                            },
-                                          ].map((social) => (
                                             <td
-                                              key={social.id}
-                                              className={
-                                                social.href ? "" : "hidden"
-                                              }
+                                              style={{
+                                                verticalAlign: "middle",
+                                                fontSize: 12,
+                                              }}
                                             >
                                               <a
-                                                id={`link-${social.id}`}
-                                                href={social.href || ""}
+                                                id="link-email"
+                                                href={
+                                                  trimmedValues.email
+                                                    ? `mailto:${trimmedValues.email}`
+                                                    : ""
+                                                }
                                                 style={{
-                                                  display: "inline-block",
-                                                  padding: 0,
+                                                  textDecoration: "none",
                                                   color: "#181127",
                                                 }}
                                               >
-                                                <img
-                                                  src={`${RAW_ASSET_BASE}/${social.icon}`}
-                                                  width={20}
-                                                  height={20}
-                                                  alt={social.id}
-                                                  className="tint-blue"
-                                                />
+                                                <span id="footer-email">
+                                                  {trimmedValues.email}
+                                                </span>
                                               </a>
                                             </td>
-                                          ))}
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <table
-                              cellPadding={0}
-                              cellSpacing={0}
-                              className="w-full"
-                            >
-                              <tbody>
-                                <tr>
-                                  <td height={5} />
-                                </tr>
-                                <tr>
-                                  <td
-                                    style={{
-                                      width: "100%",
-                                      borderBottom: "1px solid #283e89",
-                                      display: "block",
-                                    }}
-                                  />
-                                </tr>
-                                <tr>
-                                  <td height={5} />
-                                </tr>
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                                          </tr>
+                                          {trimmedValues.websiteUrl && (
+                                            <tr
+                                              style={{
+                                                verticalAlign: "middle",
+                                                height: 25,
+                                              }}
+                                            >
+                                              <td
+                                                width={30}
+                                                style={{
+                                                  verticalAlign: "middle",
+                                                }}
+                                              >
+                                                <img
+                                                  src={`${RAW_ASSET_BASE}/globe.png`}
+                                                  width={20}
+                                                  height={20}
+                                                  alt="Website"
+                                                  style={{ display: "block" }}
+                                                />
+                                              </td>
+                                              <td
+                                                style={{
+                                                  verticalAlign: "middle",
+                                                  fontSize: 12,
+                                                }}
+                                              >
+                                                <a
+                                                  id="link-website"
+                                                  href={
+                                                    trimmedValues.websiteUrl
+                                                  }
+                                                  style={{
+                                                    textDecoration: "none",
+                                                    color: "#181127",
+                                                  }}
+                                                >
+                                                  <span id="footer-website">
+                                                    {trimmedValues.websiteLabel ||
+                                                      trimmedValues.websiteUrl}
+                                                  </span>
+                                                </a>
+                                              </td>
+                                            </tr>
+                                          )}
+                                          <tr
+                                            style={{
+                                              verticalAlign: "middle",
+                                              height: 25,
+                                            }}
+                                          >
+                                            <td
+                                              width={30}
+                                              style={{
+                                                verticalAlign: "middle",
+                                              }}
+                                            >
+                                              <img
+                                                src={`${RAW_ASSET_BASE}/building.png`}
+                                                width={20}
+                                                height={20}
+                                                alt="Location"
+                                                style={{ display: "block" }}
+                                              />
+                                            </td>
+                                            <td
+                                              style={{
+                                                verticalAlign: "middle",
+                                                fontSize: 12,
+                                              }}
+                                            >
+                                              <span id="footer-locatie-1">
+                                                {trimmedValues.location1}
+                                              </span>
+                                            </td>
+                                          </tr>
+                                          {trimmedValues.location2 && (
+                                            <tr
+                                              id="footer-locatie-2-container"
+                                              style={{
+                                                verticalAlign: "middle",
+                                                height: 25,
+                                              }}
+                                            >
+                                              <td
+                                                width={30}
+                                                style={{
+                                                  verticalAlign: "middle",
+                                                }}
+                                              />
+                                              <td
+                                                style={{
+                                                  verticalAlign: "middle",
+                                                  fontSize: 12,
+                                                }}
+                                              >
+                                                <span id="footer-locatie-2">
+                                                  {trimmedValues.location2}
+                                                </span>
+                                              </td>
+                                            </tr>
+                                          )}
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                cellPadding={0}
+                                cellSpacing={0}
+                                style={{ width: "100%", marginTop: 5 }}
+                              >
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                      <a
+                                        href="https://upshift.be"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                      >
+                                        <img
+                                          src={`${RAW_ASSET_BASE}/upshift_logo.png`}
+                                          width={100}
+                                          alt="Upshift"
+                                          style={{
+                                            maxHeight: 50,
+                                            width: "auto",
+                                            display: "block",
+                                          }}
+                                        />
+                                      </a>
+                                    </td>
+                                    <td
+                                      style={{
+                                        paddingBottom: 2,
+                                        textAlign: "right",
+                                      }}
+                                    >
+                                      <table
+                                        cellPadding={0}
+                                        cellSpacing={0}
+                                        style={{
+                                          marginLeft: "auto",
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <tbody>
+                                          <tr>
+                                            {[
+                                              {
+                                                id: "facebook",
+                                                icon: "facebook.png",
+                                                href: trimmedValues.facebook,
+                                              },
+                                              {
+                                                id: "linkedin",
+                                                icon: "linkedin.png",
+                                                href: trimmedValues.linkedin,
+                                              },
+                                              {
+                                                id: "instagram",
+                                                icon: "instagram.png",
+                                                href: trimmedValues.instagram,
+                                              },
+                                            ].map((social) =>
+                                              social.href ? (
+                                                <td key={social.id}>
+                                                  <a
+                                                    id={`link-${social.id}`}
+                                                    href={social.href}
+                                                    style={{
+                                                      display: "inline-block",
+                                                      padding: 0,
+                                                      color: "#181127",
+                                                    }}
+                                                  >
+                                                    <img
+                                                      src={`${RAW_ASSET_BASE}/${social.icon}`}
+                                                      width={20}
+                                                      height={20}
+                                                      alt={social.id}
+                                                      style={{
+                                                        display: "block",
+                                                      }}
+                                                    />
+                                                  </a>
+                                                </td>
+                                              ) : null
+                                            )}
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <table
+                                cellPadding={0}
+                                cellSpacing={0}
+                                style={{ width: "100%" }}
+                              >
+                                <tbody>
+                                  <tr>
+                                    <td height={5} />
+                                  </tr>
+                                  <tr>
+                                    <td
+                                      style={{
+                                        width: "100%",
+                                        borderBottom: "1px solid #283e89",
+                                        display: "block",
+                                      }}
+                                    />
+                                  </tr>
+                                  <tr>
+                                    <td height={5} />
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </CardContent>
