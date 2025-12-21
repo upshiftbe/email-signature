@@ -99,10 +99,10 @@ type FormField = {
 };
 
 const FORM_FIELDS: FormField[] = [
-  { id: "input-naam", label: "Name", placeholder: "Nadia Lowe" },
-  { id: "input-functie", label: "Role", placeholder: "Head of Experience" },
-  { id: "input-gsm", label: "Phone", placeholder: "+32 468 01 44 29" },
-  { id: "input-email", label: "Email", placeholder: "name@company.com" },
+  { id: "input-naam", label: "Name", placeholder: "Final boss" },
+  { id: "input-functie", label: "Role", placeholder: "Chiefest of chiefs" },
+  { id: "input-gsm", label: "Phone", placeholder: "+32 470 01 23 45" },
+  { id: "input-email", label: "Email", placeholder: "hello@upshift.be" },
   {
     id: "input-locatie-1",
     label: "Primary location",
@@ -117,14 +117,14 @@ const FORM_FIELDS: FormField[] = [
   {
     id: "input-facebook",
     label: "Facebook URL",
-    placeholder: "https://facebook.com/company",
+    placeholder: "https://www.facebook.com/upshiftbe",
     type: "url",
     hint: "Optional, add a public page so colleagues can follow you",
   },
   {
     id: "input-linkedin",
     label: "LinkedIn URL",
-    placeholder: "https://linkedin.com/company",
+    placeholder: "https://www.linkedin.com/company/37812214/admin/dashboard/",
     type: "url",
     hint: "Optional, include the full URL for clickable links",
   },
@@ -184,13 +184,23 @@ const FIELD_MAP: Record<FormField["id"], FormField> = FORM_FIELDS.reduce(
 
 type FormState = Record<string, string>;
 const STORAGE_KEY = "signatureBuilderState";
-const DEFAULT_STATE: FormState = FORM_FIELDS.reduce(
-  (state, field) => ({
-    ...state,
-    [field.id]: "",
-  }),
-  {} as FormState
-);
+const PREFILL_VALUES: Record<FormField["id"], string> = {
+  "input-facebook": "https://www.facebook.com/upshiftbe",
+  "input-linkedin":
+    "https://www.linkedin.com/company/37812214/admin/dashboard/",
+};
+
+function createDefaultState(): FormState {
+  return FORM_FIELDS.reduce<FormState>(
+    (state, field) => ({
+      ...state,
+      [field.id]: PREFILL_VALUES[field.id] ?? "",
+    }),
+    {} as FormState
+  );
+}
+
+const DEFAULT_STATE: FormState = createDefaultState();
 
 function readStoredState(): FormState {
   if (typeof window === "undefined") {
@@ -249,6 +259,13 @@ function App() {
         };
       }
 
+      if (PREFILL_VALUES[field.id]) {
+        return {
+          ...acc,
+          [field.id]: PREFILL_VALUES[field.id],
+        };
+      }
+
       return {
         ...acc,
         [field.id]: "",
@@ -257,6 +274,18 @@ function App() {
 
     setFormState(nextState);
     setHydrated(true);
+  }, []);
+
+  const resetForm = useCallback(() => {
+    const defaultState = createDefaultState();
+    setFormState(defaultState);
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    localStorage.removeItem(STORAGE_KEY);
+    window.history.replaceState(null, "", window.location.pathname);
   }, []);
 
   const updateUrlAndStorage = useCallback((state: FormState) => {
@@ -376,9 +405,6 @@ function App() {
               Upshift
             </span>
             <span className="mx-2 h-4 w-px bg-slate-200" aria-hidden />
-            <span className="text-slate-600">
-              HubSpot-inspired signature lab
-            </span>
           </div>
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div className="space-y-1">
@@ -386,30 +412,35 @@ function App() {
                 Email signature builder
               </h1>
               <p className="max-w-3xl text-base text-slate-600">
-                Modeled after the HubSpot experience: fill in the left column
-                and preview your live email signature on the right. Everything
-                stays synced with the URL for easy sharing.
+                Fill in the left column and preview your live email signature on
+                the right. Everything stays synced with the URL for easy
+                sharing.
               </p>
-            </div>
-            <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
-              <span
-                className="h-2 w-2 rounded-full bg-emerald-500"
-                aria-hidden
-              />
-              Step 1 · Create my signature
             </div>
           </div>
         </header>
         <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr]">
           <section className="space-y-6">
             <Card className="bg-white/90 border border-slate-200 text-slate-900 shadow-2xl shadow-slate-900/5">
-              <CardHeader className="space-y-2">
-                <CardTitle className="text-slate-900">
-                  Signature details
-                </CardTitle>
-                <CardDescription className="text-slate-500">
-                  Only the filled fields are copied into the final HTML snippet.
-                </CardDescription>
+              <CardHeader className="space-y-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="space-y-2">
+                    <CardTitle className="text-slate-900">
+                      Signature details
+                    </CardTitle>
+                    <CardDescription className="text-slate-500">
+                      Only the filled fields are copied into the final HTML
+                      snippet.
+                    </CardDescription>
+                  </div>
+                  <Button
+                    type="button"
+                    className="h-10 border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 shadow-sm shadow-rose-200 hover:border-rose-300 hover:bg-rose-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500/70"
+                    onClick={resetForm}
+                  >
+                    Reset form
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6 px-6 pb-6 pt-1">
                 <form className="space-y-6" autoComplete="off">
@@ -493,12 +524,6 @@ function App() {
           </section>
           <aside className="space-y-6">
             <Card className="bg-slate-900 text-white shadow-2xl shadow-slate-900/40 lg:sticky lg:top-10">
-              <CardHeader className="space-y-2">
-                <CardTitle>Live preview</CardTitle>
-                <CardDescription>
-                  The output in this card is what gets copied to your clipboard.
-                </CardDescription>
-              </CardHeader>
               <CardContent className="space-y-5 px-6 pb-6 pt-1">
                 <div className="flex items-center gap-2 rounded-3xl border border-slate-800/60 bg-slate-900/60 px-3 py-2 text-xs text-slate-300">
                   <span
@@ -521,15 +546,12 @@ function App() {
                   <div className="flex items-center gap-3 border-b border-slate-200 bg-gradient-to-r from-white via-slate-50 to-white px-4 py-3 text-sm text-slate-700">
                     <div className="flex flex-col gap-1">
                       <span className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-600">
-                        Inbox preview
+                        Email preview
                       </span>
                       <span className="font-semibold text-slate-900">
                         New message
                       </span>
                     </div>
-                    <span className="ml-auto rounded-full bg-slate-200 px-3 py-1 text-[11px] font-semibold text-slate-600">
-                      Signature preview
-                    </span>
                   </div>
                   <div className="space-y-1 border-b border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
                     <div className="flex items-center gap-2">
@@ -537,7 +559,7 @@ function App() {
                         From
                       </span>
                       <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">
-                        <span>you@upshift.be</span>
+                        <span>hello@upshift.be</span>
                         <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
                           Your info
                         </span>
@@ -571,8 +593,7 @@ function App() {
                       <p className="m-0">Hi there,</p>
                       <p className="m-0">
                         Here's the latest signature block. It updates live as
-                        you tweak the fields on the left, just like the HubSpot
-                        flow.
+                        you tweak the fields on the left.
                       </p>
                       <p className="m-0">Thanks!</p>
                     </div>
@@ -796,10 +817,10 @@ function App() {
                                       rel="noreferrer"
                                     >
                                       <img
-                                          src={`${RAW_ASSET_BASE}/upshift_logo.png`}
-                                          width={100}
-                                          alt="Upshift"
-                                          style={{ maxHeight: 50, width: "auto" }}
+                                        src={`${RAW_ASSET_BASE}/upshift_logo.png`}
+                                        width={100}
+                                        alt="Upshift"
+                                        style={{ maxHeight: 50, width: "auto" }}
                                       />
                                     </a>
                                   </td>
@@ -897,9 +918,17 @@ function App() {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex flex-col gap-3 pt-0">
+              <CardFooter className="flex flex-col gap-2 pt-0">
                 <Button
-                  className="w-full bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
+                  type="button"
+                  className="w-full border border-slate-700 bg-transparent text-slate-200 hover:border-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
+                  onClick={resetForm}
+                >
+                  Reset form
+                </Button>
+                <Button
+                  type="button"
+                  className="w-full bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70 cursor-pointer"
                   onClick={copySignature}
                 >
                   Copy signature
