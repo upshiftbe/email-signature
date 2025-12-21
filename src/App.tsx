@@ -218,6 +218,9 @@ function persistState(state: FormState) {
   }
 }
 
+const RAW_ASSET_BASE =
+  "https://raw.githubusercontent.com/upshiftbe/email-signature/refs/heads/main/src/assets";
+
 function App() {
   const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
   const [hydrated, setHydrated] = useState(false);
@@ -626,7 +629,7 @@ function App() {
                                             className="align-middle"
                                           >
                                             <img
-                                              src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/phone.png"
+                                              src={`${RAW_ASSET_BASE}/phone.png`}
                                               width={20}
                                               height={20}
                                               alt="Phone"
@@ -663,7 +666,7 @@ function App() {
                                             className="align-middle"
                                           >
                                             <img
-                                              src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/mail.png"
+                                              src={`${RAW_ASSET_BASE}/mail.png`}
                                               width={20}
                                               height={20}
                                               alt="Email"
@@ -701,7 +704,7 @@ function App() {
                                               className="align-middle"
                                             >
                                               <img
-                                                src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/globe.png"
+                                                src={`${RAW_ASSET_BASE}/globe.png`}
                                                 width={20}
                                                 height={20}
                                                 alt="Website"
@@ -736,7 +739,7 @@ function App() {
                                             className="align-middle"
                                           >
                                             <img
-                                              src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/building.png"
+                                              src={`${RAW_ASSET_BASE}/building.png`}
                                               width={20}
                                               height={20}
                                               alt="Location"
@@ -793,9 +796,10 @@ function App() {
                                       rel="noreferrer"
                                     >
                                       <img
-                                        src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/logo.png"
-                                        width={100}
-                                        alt="Upshift"
+                                          src={`${RAW_ASSET_BASE}/upshift_logo.png`}
+                                          width={100}
+                                          alt="Upshift"
+                                          style={{ maxHeight: 50, width: "auto" }}
                                       />
                                     </a>
                                   </td>
@@ -843,7 +847,7 @@ function App() {
                                                 }}
                                               >
                                                 <img
-                                                  src={`https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/${social.icon}`}
+                                                  src={`${RAW_ASSET_BASE}/${social.icon}`}
                                                   width={20}
                                                   height={20}
                                                   alt={social.id}
