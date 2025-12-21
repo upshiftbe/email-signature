@@ -1,0 +1,912 @@
+import type { ChangeEvent, HTMLAttributes, ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+} from "./components/ui";
+
+// Lightweight UI primitives inspired by the provided example.
+type FieldProps = HTMLAttributes<HTMLDivElement> & { "data-invalid"?: boolean };
+
+function Field({ children, className = "", ...rest }: FieldProps) {
+  return (
+    <div
+      className={
+        "rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-sm transition focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100 data-[invalid=true]:border-rose-300 data-[invalid=true]:ring-2 data-[invalid=true]:ring-rose-100 " +
+        className
+      }
+      {...rest}
+    >
+      <div className="space-y-2">{children}</div>
+    </div>
+  );
+}
+
+function FieldGroup({ children }: { children: ReactNode }) {
+  return <div className="flex flex-col gap-4">{children}</div>;
+}
+
+function FieldLabel({
+  children,
+  htmlFor,
+}: {
+  children: ReactNode;
+  htmlFor?: string;
+}) {
+  return (
+    <Label htmlFor={htmlFor} className="text-sm font-semibold text-slate-700">
+      {children}
+    </Label>
+  );
+}
+
+function FieldDescription({ children }: { children: ReactNode }) {
+  return <p className="text-xs text-slate-500">{children}</p>;
+}
+
+function InputGroup({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {children}
+    </div>
+  );
+}
+
+function InputGroupAddon({
+  children,
+  align,
+}: {
+  children: ReactNode;
+  align?: "block-end" | "center";
+}) {
+  const alignment = align === "block-end" ? "items-end" : "items-center";
+  return (
+    <div
+      className={`flex ${alignment} bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function InputGroupText({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span className={`whitespace-nowrap text-xs text-slate-500 ${className}`}>
+      {children}
+    </span>
+  );
+}
+
+type FormField = {
+  id: string;
+  label: string;
+  placeholder: string;
+  type?: "text" | "url";
+  hint?: string;
+};
+
+const FORM_FIELDS: FormField[] = [
+  { id: "input-naam", label: "Name", placeholder: "Nadia Lowe" },
+  { id: "input-functie", label: "Role", placeholder: "Head of Experience" },
+  { id: "input-gsm", label: "Phone", placeholder: "+32 468 01 44 29" },
+  { id: "input-email", label: "Email", placeholder: "name@company.com" },
+  {
+    id: "input-locatie-1",
+    label: "Primary location",
+    placeholder: "Antwerpen, België",
+  },
+  {
+    id: "input-locatie-2",
+    label: "Secondary location",
+    placeholder: "Brussel, België",
+    hint: "Optional, add a second office or department name",
+  },
+  {
+    id: "input-facebook",
+    label: "Facebook URL",
+    placeholder: "https://facebook.com/company",
+    type: "url",
+    hint: "Optional, add a public page so colleagues can follow you",
+  },
+  {
+    id: "input-linkedin",
+    label: "LinkedIn URL",
+    placeholder: "https://linkedin.com/company",
+    type: "url",
+    hint: "Optional, include the full URL for clickable links",
+  },
+  {
+    id: "input-instagram",
+    label: "Instagram URL",
+    placeholder: "https://instagram.com/company",
+    type: "url",
+    hint: "Optional, a second handle for the social bar",
+  },
+  {
+    id: "input-website",
+    label: "Website URL",
+    placeholder: "https://company.com",
+    type: "url",
+    hint: "Include https:// so recipients can tap the link",
+  },
+];
+
+type FormGroup = {
+  title: string;
+  description: string;
+  fieldIds: FormField["id"][];
+};
+
+const FORM_GROUPS: FormGroup[] = [
+  {
+    title: "Identity",
+    description:
+      "Capture the name and role that appear directly under your signature.",
+    fieldIds: ["input-naam", "input-functie"],
+  },
+  {
+    title: "Contact",
+    description: "Phone, email and website links are clickable for recipients.",
+    fieldIds: ["input-gsm", "input-email", "input-website"],
+  },
+  {
+    title: "Location",
+    description: "Add primary and optional secondary offices or departments.",
+    fieldIds: ["input-locatie-1", "input-locatie-2"],
+  },
+  {
+    title: "Social",
+    description: "Optional public handles to share in your footer.",
+    fieldIds: ["input-facebook", "input-linkedin", "input-instagram"],
+  },
+];
+
+const FIELD_MAP: Record<FormField["id"], FormField> = FORM_FIELDS.reduce(
+  (acc, field) => {
+    acc[field.id] = field;
+    return acc;
+  },
+  {} as Record<FormField["id"], FormField>
+);
+
+type FormState = Record<string, string>;
+const STORAGE_KEY = "signatureBuilderState";
+const DEFAULT_STATE: FormState = FORM_FIELDS.reduce(
+  (state, field) => ({
+    ...state,
+    [field.id]: "",
+  }),
+  {} as FormState
+);
+
+function readStoredState(): FormState {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as FormState) : {};
+  } catch (error) {
+    console.warn("Unable to read localStorage", error);
+    return {};
+  }
+}
+
+function persistState(state: FormState) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.warn("Unable to persist localStorage", error);
+  }
+}
+
+function App() {
+  const [formState, setFormState] = useState<FormState>(DEFAULT_STATE);
+  const [hydrated, setHydrated] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const stored = readStoredState();
+    const nextState = FORM_FIELDS.reduce<FormState>((acc, field) => {
+      const fromParam = params.get(field.id);
+      if (fromParam !== null) {
+        return {
+          ...acc,
+          [field.id]: fromParam,
+        };
+      }
+
+      if (stored[field.id]) {
+        return {
+          ...acc,
+          [field.id]: stored[field.id],
+        };
+      }
+
+      return {
+        ...acc,
+        [field.id]: "",
+      };
+    }, {});
+
+    setFormState(nextState);
+    setHydrated(true);
+  }, []);
+
+  const updateUrlAndStorage = useCallback((state: FormState) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const params = new URLSearchParams();
+    Object.entries(state).forEach(([key, value]) => {
+      const trimmed = value.trim();
+      if (trimmed) {
+        params.set(key, trimmed);
+      }
+    });
+
+    const query = params.toString();
+    const nextUrl = window.location.pathname + (query ? `?${query}` : "");
+    window.history.replaceState(null, "", nextUrl);
+    persistState(state);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    updateUrlAndStorage(formState);
+  }, [formState, hydrated, updateUrlAndStorage]);
+
+  const trimmedValues = useMemo(() => {
+    const getValue = (key: string) => (formState[key] || "").trim();
+    const websiteUrl = getValue("input-website");
+    return {
+      name: getValue("input-naam"),
+      role: getValue("input-functie"),
+      phone: getValue("input-gsm"),
+      email: getValue("input-email"),
+      location1: getValue("input-locatie-1"),
+      location2: getValue("input-locatie-2"),
+      websiteUrl,
+      websiteLabel: websiteUrl ? websiteUrl.replace(/^https?:\/\//, "") : "",
+      facebook: getValue("input-facebook"),
+      linkedin: getValue("input-linkedin"),
+      instagram: getValue("input-instagram"),
+    };
+  }, [formState]);
+
+  const handleFieldChange = useCallback(
+    (id: string) => (event: ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setFormState((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+    },
+    []
+  );
+
+  const copySignature = useCallback(async () => {
+    const preview = previewRef.current;
+    if (!preview) {
+      return;
+    }
+
+    const htmlPayload = preview.outerHTML;
+    const plainPayload = preview.innerText || "";
+
+    if (navigator.clipboard?.write && typeof ClipboardItem !== "undefined") {
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([htmlPayload], { type: "text/html" }),
+            "text/plain": new Blob([plainPayload], { type: "text/plain" }),
+          }),
+        ]);
+        return;
+      } catch (error) {
+        console.warn("navigator.clipboard.write failed", error);
+      }
+    }
+
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const tempContainer = document.createElement("div");
+    tempContainer.style.position = "fixed";
+    tempContainer.style.left = "-9999px";
+    tempContainer.innerHTML = htmlPayload;
+    document.body.appendChild(tempContainer);
+
+    const range = document.createRange();
+    range.selectNodeContents(tempContainer);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    try {
+      document.execCommand("copy");
+    } catch (error) {
+      console.warn("Copy command failed", error);
+    }
+
+    selection?.removeAllRanges();
+    document.body.removeChild(tempContainer);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/40 px-4 py-10 text-slate-900">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8">
+        <header className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white/80 p-6 shadow-lg shadow-emerald-200/50 backdrop-blur">
+          <div className="flex items-center gap-3 text-sm font-semibold text-emerald-700">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm shadow-emerald-400/50">
+              <span>U</span>
+            </div>
+            <span className="uppercase tracking-[0.28em] text-xs text-emerald-700">
+              Upshift
+            </span>
+            <span className="mx-2 h-4 w-px bg-slate-200" aria-hidden />
+            <span className="text-slate-600">
+              HubSpot-inspired signature lab
+            </span>
+          </div>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">
+                Email signature builder
+              </h1>
+              <p className="max-w-3xl text-base text-slate-600">
+                Modeled after the HubSpot experience: fill in the left column
+                and preview your live email signature on the right. Everything
+                stays synced with the URL for easy sharing.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm">
+              <span
+                className="h-2 w-2 rounded-full bg-emerald-500"
+                aria-hidden
+              />
+              Step 1 · Create my signature
+            </div>
+          </div>
+        </header>
+        <div className="grid items-start gap-6 lg:grid-cols-[1.08fr_0.92fr]">
+          <section className="space-y-6">
+            <Card className="bg-white/90 border border-slate-200 text-slate-900 shadow-2xl shadow-slate-900/5">
+              <CardHeader className="space-y-2">
+                <CardTitle className="text-slate-900">
+                  Signature details
+                </CardTitle>
+                <CardDescription className="text-slate-500">
+                  Only the filled fields are copied into the final HTML snippet.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6 px-6 pb-6 pt-1">
+                <form className="space-y-6" autoComplete="off">
+                  {FORM_GROUPS.map((group) => (
+                    <fieldset
+                      key={group.title}
+                      className="space-y-4 rounded-3xl border border-slate-100 bg-slate-50/70 p-5 shadow-inner"
+                    >
+                      <legend className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+                        {group.title}
+                      </legend>
+                      <p className="text-sm text-slate-500">
+                        {group.description}
+                      </p>
+                      <FieldGroup>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {group.fieldIds.map((fieldId) => {
+                            const field = FIELD_MAP[fieldId];
+                            if (!field) return null;
+                            const isWide =
+                              field.id.startsWith("input-locatie") ||
+                              field.id === "input-website";
+                            const isWebsite = field.id === "input-website";
+                            const isPhone = field.id === "input-gsm";
+                            const isEmail = field.id === "input-email";
+                            return (
+                              <Field
+                                key={field.id}
+                                className={isWide ? "sm:col-span-2" : ""}
+                              >
+                                <FieldLabel htmlFor={field.id}>
+                                  {field.label}
+                                </FieldLabel>
+                                {isWebsite || isPhone || isEmail ? (
+                                  <InputGroup>
+                                    <InputGroupAddon>
+                                      <InputGroupText>
+                                        {isWebsite
+                                          ? "https://"
+                                          : isPhone
+                                          ? "+"
+                                          : "@"}
+                                      </InputGroupText>
+                                    </InputGroupAddon>
+                                    <div className="flex-1">
+                                      <Input
+                                        id={field.id}
+                                        placeholder={field.placeholder}
+                                        type={field.type ?? "text"}
+                                        value={formState[field.id] ?? ""}
+                                        onChange={handleFieldChange(field.id)}
+                                        className="h-11 border-0 bg-transparent px-3 text-slate-900 placeholder:text-slate-400 shadow-none focus:border-0 focus:ring-0"
+                                      />
+                                    </div>
+                                  </InputGroup>
+                                ) : (
+                                  <Input
+                                    id={field.id}
+                                    placeholder={field.placeholder}
+                                    type={field.type ?? "text"}
+                                    value={formState[field.id] ?? ""}
+                                    onChange={handleFieldChange(field.id)}
+                                    className="h-11 border-0 bg-transparent px-0 text-slate-900 placeholder:text-slate-400 shadow-none focus:border-0 focus:ring-0"
+                                  />
+                                )}
+                                {field.hint && (
+                                  <FieldDescription>
+                                    {field.hint}
+                                  </FieldDescription>
+                                )}
+                              </Field>
+                            );
+                          })}
+                        </div>
+                      </FieldGroup>
+                    </fieldset>
+                  ))}
+                </form>
+              </CardContent>
+            </Card>
+          </section>
+          <aside className="space-y-6">
+            <Card className="bg-slate-900 text-white shadow-2xl shadow-slate-900/40 lg:sticky lg:top-10">
+              <CardHeader className="space-y-2">
+                <CardTitle>Live preview</CardTitle>
+                <CardDescription>
+                  The output in this card is what gets copied to your clipboard.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5 px-6 pb-6 pt-1">
+                <div className="flex items-center gap-2 rounded-3xl border border-slate-800/60 bg-slate-900/60 px-3 py-2 text-xs text-slate-300">
+                  <span
+                    className="h-2 w-2 rounded-full bg-rose-500"
+                    aria-hidden
+                  />
+                  <span
+                    className="h-2 w-2 rounded-full bg-amber-300/90"
+                    aria-hidden
+                  />
+                  <span
+                    className="h-2 w-2 rounded-full bg-emerald-400/90"
+                    aria-hidden
+                  />
+                  <span className="ml-auto text-[10px] uppercase tracking-[0.4em] text-slate-400">
+                    Preview
+                  </span>
+                </div>
+                <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-slate-100 shadow-xl">
+                  <div className="flex items-center gap-3 border-b border-slate-200 bg-gradient-to-r from-white via-slate-50 to-white px-4 py-3 text-sm text-slate-700">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-600">
+                        Inbox preview
+                      </span>
+                      <span className="font-semibold text-slate-900">
+                        New message
+                      </span>
+                    </div>
+                    <span className="ml-auto rounded-full bg-slate-200 px-3 py-1 text-[11px] font-semibold text-slate-600">
+                      Signature preview
+                    </span>
+                  </div>
+                  <div className="space-y-1 border-b border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+                    <div className="flex items-center gap-2">
+                      <span className="w-14 text-right text-[11px] font-semibold text-slate-500">
+                        From
+                      </span>
+                      <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700">
+                        <span>you@upshift.be</span>
+                        <span className="ml-auto rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                          Your info
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-14 text-right text-[11px] font-semibold text-slate-500">
+                        To
+                      </span>
+                      <div className="flex w-full items-center rounded-md border border-slate-200 bg-white px-3 py-2 text-slate-700">
+                        <span>recipient@example.com</span>
+                        <span className="ml-auto text-[11px] text-slate-400">
+                          Cc
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-14 text-right text-[11px] font-semibold text-slate-500">
+                        Subject
+                      </span>
+                      <div className="flex w-full items-center rounded-md border border-slate-200 bg-white px-3 py-2 text-slate-700">
+                        <span>Sharing my updated signature</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="signature-preview space-y-4 bg-white px-6 py-6 text-slate-900"
+                    ref={previewRef}
+                  >
+                    <div className="space-y-2 text-[13px] leading-relaxed text-slate-700">
+                      <p className="m-0">Hi there,</p>
+                      <p className="m-0">
+                        Here's the latest signature block. It updates live as
+                        you tweak the fields on the left, just like the HubSpot
+                        flow.
+                      </p>
+                      <p className="m-0">Thanks!</p>
+                    </div>
+                    <table
+                      cellPadding={0}
+                      cellSpacing={0}
+                      className="w-full"
+                      style={{
+                        fontFamily: "Segoe UI",
+                        fontSize: 12,
+                        verticalAlign: "middle",
+                      }}
+                    >
+                      <tbody>
+                        <tr>
+                          <td>
+                            <table
+                              cellPadding={0}
+                              cellSpacing={0}
+                              className="w-full"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td style={{ verticalAlign: "middle" }}>
+                                    <h3 className="m-0 text-[17px] font-medium text-[#181127]">
+                                      <span id="footer-naam">
+                                        {trimmedValues.name}
+                                      </span>
+                                    </h3>
+                                    <p className="m-0 text-[12px] leading-[22px] text-[#181127]">
+                                      <span id="footer-functie">
+                                        {trimmedValues.role}
+                                      </span>
+                                    </p>
+                                  </td>
+                                  <td className="px-3">
+                                    <span className="block h-full w-px border-l border-[#283e89]" />
+                                  </td>
+                                  <td style={{ verticalAlign: "middle" }}>
+                                    <table
+                                      cellPadding={0}
+                                      cellSpacing={0}
+                                      className="w-full"
+                                    >
+                                      <tbody>
+                                        <tr
+                                          style={{
+                                            verticalAlign: "middle",
+                                            height: 25,
+                                          }}
+                                        >
+                                          <td
+                                            width={30}
+                                            className="align-middle"
+                                          >
+                                            <img
+                                              src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/phone.png"
+                                              width={20}
+                                              height={20}
+                                              alt="Phone"
+                                              className="tint-blue"
+                                            />
+                                          </td>
+                                          <td className="align-middle text-[12px] text-[#181127]">
+                                            <a
+                                              id="link-gsm"
+                                              href={
+                                                trimmedValues.phone
+                                                  ? `tel:${trimmedValues.phone}`
+                                                  : ""
+                                              }
+                                              style={{
+                                                textDecoration: "none",
+                                                color: "#181127",
+                                              }}
+                                            >
+                                              <span id="footer-gsm">
+                                                {trimmedValues.phone}
+                                              </span>
+                                            </a>
+                                          </td>
+                                        </tr>
+                                        <tr
+                                          style={{
+                                            verticalAlign: "middle",
+                                            height: 25,
+                                          }}
+                                        >
+                                          <td
+                                            width={30}
+                                            className="align-middle"
+                                          >
+                                            <img
+                                              src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/mail.png"
+                                              width={20}
+                                              height={20}
+                                              alt="Email"
+                                              className="tint-blue"
+                                            />
+                                          </td>
+                                          <td className="align-middle text-[12px] text-[#181127]">
+                                            <a
+                                              id="link-email"
+                                              href={
+                                                trimmedValues.email
+                                                  ? `mailto:${trimmedValues.email}`
+                                                  : ""
+                                              }
+                                              style={{
+                                                textDecoration: "none",
+                                                color: "#181127",
+                                              }}
+                                            >
+                                              <span id="footer-email">
+                                                {trimmedValues.email}
+                                              </span>
+                                            </a>
+                                          </td>
+                                        </tr>
+                                        {trimmedValues.websiteUrl && (
+                                          <tr
+                                            style={{
+                                              verticalAlign: "middle",
+                                              height: 25,
+                                            }}
+                                          >
+                                            <td
+                                              width={30}
+                                              className="align-middle"
+                                            >
+                                              <img
+                                                src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/globe.png"
+                                                width={20}
+                                                height={20}
+                                                alt="Website"
+                                                className="tint-blue"
+                                              />
+                                            </td>
+                                            <td className="align-middle text-[12px] text-[#181127]">
+                                              <a
+                                                id="link-website"
+                                                href={trimmedValues.websiteUrl}
+                                                style={{
+                                                  textDecoration: "none",
+                                                  color: "#181127",
+                                                }}
+                                              >
+                                                <span id="footer-website">
+                                                  {trimmedValues.websiteLabel ||
+                                                    trimmedValues.websiteUrl}
+                                                </span>
+                                              </a>
+                                            </td>
+                                          </tr>
+                                        )}
+                                        <tr
+                                          style={{
+                                            verticalAlign: "middle",
+                                            height: 25,
+                                          }}
+                                        >
+                                          <td
+                                            width={30}
+                                            className="align-middle"
+                                          >
+                                            <img
+                                              src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/building.png"
+                                              width={20}
+                                              height={20}
+                                              alt="Location"
+                                              className="tint-blue"
+                                            />
+                                          </td>
+                                          <td className="align-middle text-[12px] text-[#181127]">
+                                            <span id="footer-locatie-1">
+                                              {trimmedValues.location1}
+                                            </span>
+                                          </td>
+                                        </tr>
+                                        {trimmedValues.location2 && (
+                                          <tr
+                                            id="footer-locatie-2-container"
+                                            style={{
+                                              verticalAlign: "middle",
+                                              height: 25,
+                                            }}
+                                          >
+                                            <td
+                                              width={30}
+                                              className="align-middle"
+                                            />
+                                            <td className="align-middle text-[12px] text-[#181127]">
+                                              <span id="footer-locatie-2">
+                                                {trimmedValues.location2}
+                                              </span>
+                                            </td>
+                                          </tr>
+                                        )}
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <table
+                              cellPadding={0}
+                              cellSpacing={0}
+                              className="w-full"
+                              style={{ marginTop: 5 }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <a
+                                      href="https://upshift.be"
+                                      target="_blank"
+                                      rel="noreferrer"
+                                    >
+                                      <img
+                                        src="https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/logo.png"
+                                        width={100}
+                                        alt="Upshift"
+                                      />
+                                    </a>
+                                  </td>
+                                  <td
+                                    className="text-right align-bottom"
+                                    style={{ paddingBottom: 2 }}
+                                  >
+                                    <table
+                                      cellPadding={0}
+                                      cellSpacing={0}
+                                      className="inline-flex items-center text-right"
+                                    >
+                                      <tbody>
+                                        <tr>
+                                          {[
+                                            {
+                                              id: "facebook",
+                                              icon: "facebook.png",
+                                              href: trimmedValues.facebook,
+                                            },
+                                            {
+                                              id: "linkedin",
+                                              icon: "linkedin.png",
+                                              href: trimmedValues.linkedin,
+                                            },
+                                            {
+                                              id: "instagram",
+                                              icon: "instagram.png",
+                                              href: trimmedValues.instagram,
+                                            },
+                                          ].map((social) => (
+                                            <td
+                                              key={social.id}
+                                              className={
+                                                social.href ? "" : "hidden"
+                                              }
+                                            >
+                                              <a
+                                                id={`link-${social.id}`}
+                                                href={social.href || ""}
+                                                style={{
+                                                  display: "inline-block",
+                                                  padding: 0,
+                                                  color: "#181127",
+                                                }}
+                                              >
+                                                <img
+                                                  src={`https://raw.githubusercontent.com/upshiftbe/on-projects-email-signature/main/${social.icon}`}
+                                                  width={20}
+                                                  height={20}
+                                                  alt={social.id}
+                                                  className="tint-blue"
+                                                />
+                                              </a>
+                                            </td>
+                                          ))}
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <table
+                              cellPadding={0}
+                              cellSpacing={0}
+                              className="w-full"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td height={5} />
+                                </tr>
+                                <tr>
+                                  <td
+                                    style={{
+                                      width: "100%",
+                                      borderBottom: "1px solid #283e89",
+                                      display: "block",
+                                    }}
+                                  />
+                                </tr>
+                                <tr>
+                                  <td height={5} />
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-3 pt-0">
+                <Button
+                  className="w-full bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
+                  onClick={copySignature}
+                >
+                  Copy signature
+                </Button>
+              </CardFooter>
+            </Card>
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
