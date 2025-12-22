@@ -1,12 +1,17 @@
 import { useCallback, useRef } from 'react';
 
+type CopyResult = {
+  success: boolean;
+  error?: string;
+};
+
 export function useClipboard() {
   const previewRef = useRef<HTMLDivElement | null>(null);
 
-  const copySignature = useCallback(async () => {
+  const copySignature = useCallback(async (): Promise<CopyResult> => {
     const preview = previewRef.current;
     if (!preview) {
-      return;
+      return { success: false, error: 'Preview not available' };
     }
 
     const htmlPayload = preview.outerHTML;
@@ -21,15 +26,16 @@ export function useClipboard() {
             'text/plain': new Blob([plainPayload], { type: 'text/plain' }),
           }),
         ]);
-        return;
+        return { success: true };
       } catch (error) {
         console.warn('navigator.clipboard.write failed', error);
+        // Fall through to execCommand fallback
       }
     }
 
     // Fallback to execCommand
     if (typeof document === 'undefined') {
-      return;
+      return { success: false, error: 'Document not available' };
     }
 
     const tempContainer = document.createElement('div');
@@ -47,13 +53,21 @@ export function useClipboard() {
     selection?.addRange(range);
 
     try {
-      document.execCommand('copy');
-    } catch (error) {
-      console.warn('Copy command failed', error);
-    }
+      const success = document.execCommand('copy');
+      selection?.removeAllRanges();
+      document.body.removeChild(tempContainer);
 
-    selection?.removeAllRanges();
-    document.body.removeChild(tempContainer);
+      if (success) {
+        return { success: true };
+      } else {
+        return { success: false, error: 'Copy command failed' };
+      }
+    } catch (error) {
+      selection?.removeAllRanges();
+      document.body.removeChild(tempContainer);
+      console.warn('Copy command failed', error);
+      return { success: false, error: 'Copy command failed' };
+    }
   }, []);
 
   return {

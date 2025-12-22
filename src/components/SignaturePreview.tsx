@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { RefObject } from 'react';
 import { Button, Card, CardContent, CardFooter } from './ui';
 import { EmailSignature } from './EmailSignature';
@@ -7,10 +8,30 @@ type SignaturePreviewProps = {
   values: TrimmedValues;
   previewRef: RefObject<HTMLDivElement | null>;
   onReset: () => void;
-  onCopy: () => void;
+  onCopy: () => Promise<{ success: boolean; error?: string }>;
 };
 
 export function SignaturePreview({ values, previewRef, onReset, onCopy }: SignaturePreviewProps) {
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const handleCopy = async () => {
+    const result = await onCopy();
+    if (result.success) {
+      setCopyStatus('success');
+      setErrorMessage('');
+    } else {
+      setCopyStatus('error');
+      setErrorMessage(result.error || 'Failed to copy signature');
+    }
+  };
+
+  const handleReset = () => {
+    setCopyStatus('idle');
+    setErrorMessage('');
+    onReset();
+  };
+
   return (
     <Card className="bg-slate-900 text-white shadow-2xl shadow-slate-900/40 lg:sticky lg:top-10">
       <CardContent className="space-y-5 px-6 pt-1 pb-6">
@@ -21,7 +42,7 @@ export function SignaturePreview({ values, previewRef, onReset, onCopy }: Signat
           <span className="ml-auto text-[10px] tracking-[0.4em] text-slate-400 uppercase">Preview</span>
         </div>
         <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-slate-100 shadow-xl">
-          <div className="flex items-center gap-3 border-b border-slate-200 bg-gradient-to-r from-white via-slate-50 to-white px-4 py-3 text-sm text-slate-700">
+          <div className="flex items-center gap-3 border-b border-slate-200 bg-linear-to-br from-white via-slate-50 to-white px-4 py-3 text-sm text-slate-700">
             <div className="flex flex-col gap-1">
               <span className="text-xs font-semibold tracking-[0.28em] text-emerald-600 uppercase">Email preview</span>
               <span className="font-semibold text-slate-900">New message</span>
@@ -79,17 +100,30 @@ export function SignaturePreview({ values, previewRef, onReset, onCopy }: Signat
         <Button
           type="button"
           className="w-full border border-slate-700 bg-transparent text-slate-200 hover:border-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
-          onClick={onReset}
+          onClick={handleReset}
         >
           Reset form
         </Button>
         <Button
           type="button"
           className="w-full cursor-pointer bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
-          onClick={onCopy}
+          onClick={handleCopy}
         >
           Copy signature
         </Button>
+        {copyStatus === 'success' && (
+          <div className="flex items-center justify-between gap-2 px-1">
+            <p className="text-xs text-emerald-400">Signature copied successfully!</p>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="text-xs text-slate-400 underline hover:text-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
+            >
+              Reset form
+            </button>
+          </div>
+        )}
+        {copyStatus === 'error' && <p className="px-1 text-xs text-rose-400">{errorMessage}</p>}
       </CardFooter>
     </Card>
   );
