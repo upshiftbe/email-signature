@@ -1,5 +1,5 @@
-import type { TrimmedValues } from "../types";
-import { RAW_ASSET_BASE } from "../config/formConfig";
+import type { TrimmedValues } from '../types';
+import { RAW_ASSET_BASE } from '../config/formConfig';
 
 type EmailSignatureProps = {
   values: TrimmedValues;
@@ -9,41 +9,37 @@ export function EmailSignature({ values }: EmailSignatureProps) {
   return (
     <div
       style={{
-        backgroundColor: "#ffffff",
+        backgroundColor: '#ffffff',
         padding: 24,
-        fontFamily: "Segoe UI, sans-serif",
+        fontFamily: 'Segoe UI, sans-serif',
         fontSize: 12,
         lineHeight: 1.4,
-        color: "#181127",
+        color: '#181127',
       }}
     >
       <table
         cellPadding={0}
         cellSpacing={0}
         style={{
-          width: "100%",
-          fontFamily: "inherit",
-          fontSize: "inherit",
-          borderCollapse: "collapse",
+          width: '100%',
+          fontFamily: 'inherit',
+          fontSize: 'inherit',
+          borderCollapse: 'collapse',
         }}
       >
         <tbody>
           <tr>
             <td>
-              <table
-                cellPadding={0}
-                cellSpacing={0}
-                style={{ width: "100%" }}
-              >
+              <table cellPadding={0} cellSpacing={0} style={{ width: '100%' }}>
                 <tbody>
                   <tr>
-                    <td style={{ verticalAlign: "middle" }}>
+                    <td style={{ verticalAlign: 'middle' }}>
                       <h3
                         style={{
                           margin: 0,
                           fontSize: 17,
                           fontWeight: 500,
-                          color: "#181127",
+                          color: '#181127',
                         }}
                       >
                         <span id="footer-naam">{values.name}</span>
@@ -52,8 +48,8 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                         style={{
                           margin: 0,
                           fontSize: 12,
-                          lineHeight: "22px",
-                          color: "#181127",
+                          lineHeight: '22px',
+                          color: '#181127',
                         }}
                       >
                         <span id="footer-functie">{values.role}</span>
@@ -61,27 +57,23 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                     </td>
                     <td
                       style={{
-                        verticalAlign: "middle",
-                        borderLeft: "1px solid #283e89",
+                        verticalAlign: 'middle',
+                        borderLeft: '1px solid #283e89',
                         paddingLeft: 16,
                       }}
                     >
-                      <table
-                        cellPadding={0}
-                        cellSpacing={0}
-                        style={{ width: "100%" }}
-                      >
+                      <table cellPadding={0} cellSpacing={0} style={{ width: '100%' }}>
                         <tbody>
                           <tr
                             style={{
-                              verticalAlign: "middle",
+                              verticalAlign: 'middle',
                               height: 25,
                             }}
                           >
                             <td
                               width={30}
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                               }}
                             >
                               <img
@@ -89,21 +81,21 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                 width={20}
                                 height={20}
                                 alt="Phone"
-                                style={{ display: "block" }}
+                                style={{ display: 'block' }}
                               />
                             </td>
                             <td
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                                 fontSize: 12,
                               }}
                             >
                               <a
                                 id="link-gsm"
-                                href={values.phone ? `tel:${values.phone}` : ""}
+                                href={values.phone ? `tel:${values.phone}` : ''}
                                 style={{
-                                  textDecoration: "none",
-                                  color: "#181127",
+                                  textDecoration: 'none',
+                                  color: '#181127',
                                 }}
                               >
                                 <span id="footer-gsm">{values.phone}</span>
@@ -112,14 +104,14 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                           </tr>
                           <tr
                             style={{
-                              verticalAlign: "middle",
+                              verticalAlign: 'middle',
                               height: 25,
                             }}
                           >
                             <td
                               width={30}
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                               }}
                             >
                               <img
@@ -127,23 +119,21 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                 width={20}
                                 height={20}
                                 alt="Email"
-                                style={{ display: "block" }}
+                                style={{ display: 'block' }}
                               />
                             </td>
                             <td
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                                 fontSize: 12,
                               }}
                             >
                               <a
                                 id="link-email"
-                                href={
-                                  values.email ? `mailto:${values.email}` : ""
-                                }
+                                href={values.email ? `mailto:${values.email}` : ''}
                                 style={{
-                                  textDecoration: "none",
-                                  color: "#181127",
+                                  textDecoration: 'none',
+                                  color: '#181127',
                                 }}
                               >
                                 <span id="footer-email">{values.email}</span>
@@ -153,14 +143,14 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                           {values.websiteUrl && (
                             <tr
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                                 height: 25,
                               }}
                             >
                               <td
                                 width={30}
                                 style={{
-                                  verticalAlign: "middle",
+                                  verticalAlign: 'middle',
                                 }}
                               >
                                 <img
@@ -168,12 +158,12 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                   width={20}
                                   height={20}
                                   alt="Website"
-                                  style={{ display: "block" }}
+                                  style={{ display: 'block' }}
                                 />
                               </td>
                               <td
                                 style={{
-                                  verticalAlign: "middle",
+                                  verticalAlign: 'middle',
                                   fontSize: 12,
                                 }}
                               >
@@ -181,27 +171,25 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                   id="link-website"
                                   href={values.websiteUrl}
                                   style={{
-                                    textDecoration: "none",
-                                    color: "#181127",
+                                    textDecoration: 'none',
+                                    color: '#181127',
                                   }}
                                 >
-                                  <span id="footer-website">
-                                    {values.websiteLabel || values.websiteUrl}
-                                  </span>
+                                  <span id="footer-website">{values.websiteLabel || values.websiteUrl}</span>
                                 </a>
                               </td>
                             </tr>
                           )}
                           <tr
                             style={{
-                              verticalAlign: "middle",
+                              verticalAlign: 'middle',
                               height: 25,
                             }}
                           >
                             <td
                               width={30}
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                               }}
                             >
                               <img
@@ -209,43 +197,39 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                 width={20}
                                 height={20}
                                 alt="Location"
-                                style={{ display: "block" }}
+                                style={{ display: 'block' }}
                               />
                             </td>
                             <td
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                                 fontSize: 12,
                               }}
                             >
-                              <span id="footer-locatie-1">
-                                {values.location1}
-                              </span>
+                              <span id="footer-locatie-1">{values.location1}</span>
                             </td>
                           </tr>
                           {values.location2 && (
                             <tr
                               id="footer-locatie-2-container"
                               style={{
-                                verticalAlign: "middle",
+                                verticalAlign: 'middle',
                                 height: 25,
                               }}
                             >
                               <td
                                 width={30}
                                 style={{
-                                  verticalAlign: "middle",
+                                  verticalAlign: 'middle',
                                 }}
                               />
                               <td
                                 style={{
-                                  verticalAlign: "middle",
+                                  verticalAlign: 'middle',
                                   fontSize: 12,
                                 }}
                               >
-                                <span id="footer-locatie-2">
-                                  {values.location2}
-                                </span>
+                                <span id="footer-locatie-2">{values.location2}</span>
                               </td>
                             </tr>
                           )}
@@ -259,27 +243,19 @@ export function EmailSignature({ values }: EmailSignatureProps) {
           </tr>
           <tr>
             <td>
-              <table
-                cellPadding={0}
-                cellSpacing={0}
-                style={{ width: "100%", marginTop: 5 }}
-              >
+              <table cellPadding={0} cellSpacing={0} style={{ width: '100%', marginTop: 5 }}>
                 <tbody>
                   <tr>
                     <td>
-                      <a
-                        href="https://upshift.be"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
+                      <a href="https://upshift.be" target="_blank" rel="noreferrer">
                         <img
                           src={`${RAW_ASSET_BASE}/upshift_logo.png`}
                           width={100}
                           alt="Upshift"
                           style={{
                             maxHeight: 50,
-                            width: "auto",
-                            display: "block",
+                            width: 'auto',
+                            display: 'block',
                           }}
                         />
                       </a>
@@ -287,34 +263,34 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                     <td
                       style={{
                         paddingBottom: 2,
-                        textAlign: "right",
+                        textAlign: 'right',
                       }}
                     >
                       <table
                         cellPadding={0}
                         cellSpacing={0}
                         style={{
-                          marginLeft: "auto",
-                          display: "inline-flex",
-                          alignItems: "center",
+                          marginLeft: 'auto',
+                          display: 'inline-flex',
+                          alignItems: 'center',
                         }}
                       >
                         <tbody>
                           <tr>
                             {[
                               {
-                                id: "facebook",
-                                icon: "facebook.png",
+                                id: 'facebook',
+                                icon: 'facebook.png',
                                 href: values.facebook,
                               },
                               {
-                                id: "linkedin",
-                                icon: "linkedin.png",
+                                id: 'linkedin',
+                                icon: 'linkedin.png',
                                 href: values.linkedin,
                               },
                               {
-                                id: "instagram",
-                                icon: "instagram.png",
+                                id: 'instagram',
+                                icon: 'instagram.png',
                                 href: values.instagram,
                               },
                             ].map((social) =>
@@ -324,9 +300,9 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                     id={`link-${social.id}`}
                                     href={social.href}
                                     style={{
-                                      display: "inline-block",
+                                      display: 'inline-block',
                                       padding: 0,
-                                      color: "#181127",
+                                      color: '#181127',
                                     }}
                                   >
                                     <img
@@ -335,7 +311,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                       height={20}
                                       alt={social.id}
                                       style={{
-                                        display: "block",
+                                        display: 'block',
                                       }}
                                     />
                                   </a>
@@ -353,11 +329,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
           </tr>
           <tr>
             <td>
-              <table
-                cellPadding={0}
-                cellSpacing={0}
-                style={{ width: "100%" }}
-              >
+              <table cellPadding={0} cellSpacing={0} style={{ width: '100%' }}>
                 <tbody>
                   <tr>
                     <td height={5} />
@@ -365,9 +337,9 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                   <tr>
                     <td
                       style={{
-                        width: "100%",
-                        borderBottom: "1px solid #283e89",
-                        display: "block",
+                        width: '100%',
+                        borderBottom: '1px solid #283e89',
+                        display: 'block',
                       }}
                     />
                   </tr>
@@ -383,4 +355,3 @@ export function EmailSignature({ values }: EmailSignatureProps) {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-@import "tailwindcss";
-@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -9,7 +9,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   color: #0f172a;
   background-color: #f9fafb;
   line-height: 1.4;
@@ -50,21 +50,15 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(
-    circle at top,
-    #fafbff 0%,
-    #f2f4f8 50%,
-    #eef2f7 100%
-  );
+  background: radial-gradient(circle at top, #fafbff 0%, #f2f4f8 50%, #eef2f7 100%);
 }
 
 .tint-blue {
-  filter: invert(23%) sepia(24%) saturate(477%) hue-rotate(-186deg)
-    brightness(89%);
+  filter: invert(23%) sepia(24%) saturate(477%) hue-rotate(-186deg) brightness(89%);
 }
 
 .signature-preview table {
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: 12px;
 }
 

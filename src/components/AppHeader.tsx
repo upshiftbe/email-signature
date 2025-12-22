@@ -5,23 +5,18 @@ export function AppHeader() {
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm shadow-emerald-400/50">
           <span>U</span>
         </div>
-        <span className="uppercase tracking-[0.28em] text-xs text-emerald-700">
-          Upshift
-        </span>
+        <span className="text-xs tracking-[0.28em] text-emerald-700 uppercase">Upshift</span>
         <span className="mx-2 h-4 w-px bg-slate-200" aria-hidden />
       </div>
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">
-            Email signature builder
-          </h1>
+          <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">Email signature builder</h1>
           <p className="max-w-3xl text-base text-slate-600">
-            Fill in the left column and preview your live email signature on
-            the right. Everything stays synced with the URL for easy sharing.
+            Fill in the left column and preview your live email signature on the right. Everything stays synced with the
+            URL for easy sharing.
           </p>
         </div>
       </div>
     </header>
   );
 }
-

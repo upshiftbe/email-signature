@@ -1,16 +1,8 @@
-import type { LabelHTMLAttributes } from "react";
-import { cn } from "../../lib/utils";
+import type { LabelHTMLAttributes } from 'react';
+import { cn } from '../../lib/utils';
 
-const Label = ({
-  className,
-  ...props
-}: LabelHTMLAttributes<HTMLLabelElement>) => {
-  return (
-    <label
-      className={cn("block text-sm font-medium text-slate-300", className)}
-      {...props}
-    />
-  );
+const Label = ({ className, ...props }: LabelHTMLAttributes<HTMLLabelElement>) => {
+  return <label className={cn('block text-sm font-medium text-slate-300', className)} {...props} />;
 };
 
 export { Label };

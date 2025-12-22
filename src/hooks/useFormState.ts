@@ -1,21 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import type { FormState, TrimmedValues } from "../types";
-import { FORM_FIELDS, PREFILL_VALUES } from "../config/formConfig";
-import { readStoredState, persistState, clearStoredState } from "../lib/storage";
-import { getStateFromUrl, updateUrlFromState, clearUrlState } from "../lib/urlState";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { FormState, TrimmedValues } from '../types';
+import { FORM_FIELDS, PREFILL_VALUES } from '../config/formConfig';
+import { readStoredState, persistState, clearStoredState } from '../lib/storage';
+import { getStateFromUrl, updateUrlFromState, clearUrlState } from '../lib/urlState';
 
 function createDefaultState(): FormState {
   return FORM_FIELDS.reduce<FormState>(
     (state, field) => ({
       ...state,
-      [field.id]: PREFILL_VALUES[field.id] ?? "",
+      [field.id]: PREFILL_VALUES[field.id] ?? '',
     }),
     {} as FormState
   );
 }
 
 function initializeState(): FormState {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return createDefaultState();
   }
 
@@ -36,7 +36,7 @@ function initializeState(): FormState {
       return { ...acc, [field.id]: PREFILL_VALUES[field.id] };
     }
 
-    return { ...acc, [field.id]: "" };
+    return { ...acc, [field.id]: '' };
   }, {});
 }
 
@@ -46,7 +46,7 @@ export function useFormState() {
 
   // Hydrate on mount (client-side only)
   useEffect(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return;
     }
 
@@ -80,20 +80,20 @@ export function useFormState() {
   }, []);
 
   const trimmedValues = useMemo((): TrimmedValues => {
-    const getValue = (key: string) => (formState[key] || "").trim();
-    const websiteUrl = getValue("input-website");
+    const getValue = (key: string) => (formState[key] || '').trim();
+    const websiteUrl = getValue('input-website');
     return {
-      name: getValue("input-naam"),
-      role: getValue("input-functie"),
-      phone: getValue("input-gsm"),
-      email: getValue("input-email"),
-      location1: getValue("input-locatie-1"),
-      location2: getValue("input-locatie-2"),
+      name: getValue('input-naam'),
+      role: getValue('input-functie'),
+      phone: getValue('input-gsm'),
+      email: getValue('input-email'),
+      location1: getValue('input-locatie-1'),
+      location2: getValue('input-locatie-2'),
       websiteUrl,
-      websiteLabel: websiteUrl ? websiteUrl.replace(/^https?:\/\//, "") : "",
-      facebook: getValue("input-facebook"),
-      linkedin: getValue("input-linkedin"),
-      instagram: getValue("input-instagram"),
+      websiteLabel: websiteUrl ? websiteUrl.replace(/^https?:\/\//, '') : '',
+      facebook: getValue('input-facebook'),
+      linkedin: getValue('input-linkedin'),
+      instagram: getValue('input-instagram'),
     };
   }, [formState]);
 
@@ -105,4 +105,3 @@ export function useFormState() {
     hydrated,
   };
 }
-
