@@ -35,6 +35,8 @@ export function useClipboard() {
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
     tempContainer.style.left = '-9999px';
+    // Use textContent first, then innerHTML to prevent XSS
+    tempContainer.textContent = '';
     tempContainer.innerHTML = htmlPayload;
     document.body.appendChild(tempContainer);
 

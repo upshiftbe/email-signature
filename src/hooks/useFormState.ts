@@ -3,6 +3,7 @@ import type { FormState, TrimmedValues } from '../types';
 import { FORM_FIELDS, PREFILL_VALUES } from '../config/formConfig';
 import { readStoredState, persistState, clearStoredState } from '../lib/storage';
 import { getStateFromUrl, updateUrlFromState, clearUrlState } from '../lib/urlState';
+import { validateField, validateForm } from '../lib/validation';
 
 function createDefaultState(): FormState {
   return FORM_FIELDS.reduce<FormState>(
@@ -43,6 +44,8 @@ function initializeState(): FormState {
 export function useFormState() {
   const [formState, setFormState] = useState<FormState>(initializeState);
   const [hydrated, setHydrated] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   // Hydrate on mount (client-side only)
   useEffect(() => {
@@ -65,16 +68,50 @@ export function useFormState() {
     persistState(formState);
   }, [formState, hydrated]);
 
-  const updateField = useCallback((id: string, value: string) => {
-    setFormState((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  }, []);
+  const updateField = useCallback(
+    (id: string, value: string) => {
+      setFormState((prev) => ({
+        ...prev,
+        [id]: value,
+      }));
+
+      // Validate field if it has been touched
+      if (touched[id]) {
+        const error = validateField(id, value);
+        setErrors((prev) => {
+          if (error) {
+            return { ...prev, [id]: error };
+          }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [id]: _, ...rest } = prev;
+          return rest;
+        });
+      }
+    },
+    [touched]
+  );
+
+  const setFieldTouched = useCallback(
+    (id: string) => {
+      setTouched((prev) => ({ ...prev, [id]: true }));
+      const error = validateField(id, formState[id] || '');
+      setErrors((prev) => {
+        if (error) {
+          return { ...prev, [id]: error };
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [id]: _, ...rest } = prev;
+        return rest;
+      });
+    },
+    [formState]
+  );
 
   const resetForm = useCallback(() => {
     const defaultState = createDefaultState();
     setFormState(defaultState);
+    setErrors({});
+    setTouched({});
     clearStoredState();
     clearUrlState();
   }, []);
@@ -97,11 +134,19 @@ export function useFormState() {
     };
   }, [formState]);
 
+  const isValid = useMemo(() => {
+    const validation = validateForm(formState);
+    return validation.isValid;
+  }, [formState]);
+
   return {
     formState,
     trimmedValues,
     updateField,
+    setFieldTouched,
     resetForm,
     hydrated,
+    errors,
+    isValid,
   };
 }

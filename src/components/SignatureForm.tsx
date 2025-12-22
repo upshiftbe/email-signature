@@ -1,15 +1,17 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, FocusEvent } from 'react';
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui';
 import { FORM_GROUPS } from '../config/formConfig';
 import { FormGroup } from './FormGroup';
 
 type SignatureFormProps = {
   formState: Record<string, string>;
+  errors: Record<string, string>;
   onFieldChange: (id: string) => (event: ChangeEvent<HTMLInputElement>) => void;
+  onFieldBlur: (id: string) => (event: FocusEvent<HTMLInputElement>) => void;
   onReset: () => void;
 };
 
-export function SignatureForm({ formState, onFieldChange, onReset }: SignatureFormProps) {
+export function SignatureForm({ formState, errors, onFieldChange, onFieldBlur, onReset }: SignatureFormProps) {
   return (
     <Card className="border border-slate-200 bg-white/90 text-slate-900 shadow-2xl shadow-slate-900/5">
       <CardHeader className="space-y-4">
@@ -32,7 +34,14 @@ export function SignatureForm({ formState, onFieldChange, onReset }: SignatureFo
       <CardContent className="space-y-6 px-6 pt-1 pb-6">
         <form className="space-y-6" autoComplete="off">
           {FORM_GROUPS.map((group) => (
-            <FormGroup key={group.title} group={group} formState={formState} onChange={onFieldChange} />
+            <FormGroup
+              key={group.title}
+              group={group}
+              formState={formState}
+              errors={errors}
+              onChange={onFieldChange}
+              onBlur={onFieldBlur}
+            />
           ))}
         </form>
       </CardContent>
