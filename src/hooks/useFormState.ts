@@ -1,0 +1,108 @@
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { FormState, TrimmedValues } from "../types";
+import { FORM_FIELDS, PREFILL_VALUES } from "../config/formConfig";
+import { readStoredState, persistState, clearStoredState } from "../lib/storage";
+import { getStateFromUrl, updateUrlFromState, clearUrlState } from "../lib/urlState";
+
+function createDefaultState(): FormState {
+  return FORM_FIELDS.reduce<FormState>(
+    (state, field) => ({
+      ...state,
+      [field.id]: PREFILL_VALUES[field.id] ?? "",
+    }),
+    {} as FormState
+  );
+}
+
+function initializeState(): FormState {
+  if (typeof window === "undefined") {
+    return createDefaultState();
+  }
+
+  const params = getStateFromUrl();
+  const stored = readStoredState();
+
+  return FORM_FIELDS.reduce<FormState>((acc, field) => {
+    // Priority: URL params > localStorage > prefill > empty
+    if (params[field.id]) {
+      return { ...acc, [field.id]: params[field.id] };
+    }
+
+    if (stored[field.id]) {
+      return { ...acc, [field.id]: stored[field.id] };
+    }
+
+    if (PREFILL_VALUES[field.id]) {
+      return { ...acc, [field.id]: PREFILL_VALUES[field.id] };
+    }
+
+    return { ...acc, [field.id]: "" };
+  }, {});
+}
+
+export function useFormState() {
+  const [formState, setFormState] = useState<FormState>(initializeState);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydrate on mount (client-side only)
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const initialState = initializeState();
+    setFormState(initialState);
+    setHydrated(true);
+  }, []);
+
+  // Sync state to URL and localStorage
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    updateUrlFromState(formState);
+    persistState(formState);
+  }, [formState, hydrated]);
+
+  const updateField = useCallback((id: string, value: string) => {
+    setFormState((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  }, []);
+
+  const resetForm = useCallback(() => {
+    const defaultState = createDefaultState();
+    setFormState(defaultState);
+    clearStoredState();
+    clearUrlState();
+  }, []);
+
+  const trimmedValues = useMemo((): TrimmedValues => {
+    const getValue = (key: string) => (formState[key] || "").trim();
+    const websiteUrl = getValue("input-website");
+    return {
+      name: getValue("input-naam"),
+      role: getValue("input-functie"),
+      phone: getValue("input-gsm"),
+      email: getValue("input-email"),
+      location1: getValue("input-locatie-1"),
+      location2: getValue("input-locatie-2"),
+      websiteUrl,
+      websiteLabel: websiteUrl ? websiteUrl.replace(/^https?:\/\//, "") : "",
+      facebook: getValue("input-facebook"),
+      linkedin: getValue("input-linkedin"),
+      instagram: getValue("input-instagram"),
+    };
+  }, [formState]);
+
+  return {
+    formState,
+    trimmedValues,
+    updateField,
+    resetForm,
+    hydrated,
+  };
+}
+
