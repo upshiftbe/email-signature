@@ -7,6 +7,9 @@ type EmailSignatureProps = {
 };
 
 export function EmailSignature({ values }: EmailSignatureProps) {
+  const logoSrc = sanitizeUrl(values.logoUrl);
+  const websiteLink = sanitizeUrl(values.websiteUrl) || 'https://upshift.be';
+
   return (
     <div
       style={{
@@ -252,18 +255,20 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                 <tbody>
                   <tr>
                     <td>
-                      <a href="https://upshift.be" target="_blank" rel="noreferrer">
-                        <img
-                          src={`${RAW_ASSET_BASE}/upshift_logo.png`}
-                          width={100}
-                          alt="Upshift"
-                          style={{
-                            maxHeight: 50,
-                            width: 'auto',
-                            display: 'block',
-                          }}
-                        />
-                      </a>
+                      {logoSrc && (
+                        <a href={websiteLink} target="_blank" rel="noopener noreferrer">
+                          <img
+                            src={logoSrc}
+                            width={100}
+                            alt="Logo"
+                            style={{
+                              maxHeight: 50,
+                              width: 'auto',
+                              display: 'block',
+                            }}
+                          />
+                        </a>
+                      )}
                     </td>
                     <td
                       style={{

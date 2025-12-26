@@ -3,6 +3,13 @@ import type { FormField, FormGroup } from '../types';
 export const FORM_FIELDS: FormField[] = [
   { id: 'input-naam', label: 'Name', placeholder: 'Final boss' },
   { id: 'input-functie', label: 'Role', placeholder: 'Chiefest of chiefs' },
+  {
+    id: 'input-logo-url',
+    label: 'Logo URL',
+    placeholder: 'https://assets.example.com/logo.png',
+    type: 'url',
+    hint: 'Optional HTTPS image that appears next to your info.',
+  },
   { id: 'input-gsm', label: 'Phone', placeholder: '+32 470 01 23 45' },
   { id: 'input-email', label: 'Email', placeholder: 'hello@upshift.be' },
   {
@@ -53,6 +60,11 @@ export const FORM_GROUPS: FormGroup[] = [
     fieldIds: ['input-naam', 'input-functie'],
   },
   {
+    title: 'Branding',
+    description: 'Provide a hosted logo URL so the preview matches your brand.',
+    fieldIds: ['input-logo-url'],
+  },
+  {
     title: 'Contact',
     description: 'Phone, email and website links are clickable for recipients.',
     fieldIds: ['input-gsm', 'input-email', 'input-website'],
@@ -77,11 +89,13 @@ export const FIELD_MAP: Record<FormField['id'], FormField> = FORM_FIELDS.reduce(
   {} as Record<FormField['id'], FormField>
 );
 
+export const RAW_ASSET_BASE = 'https://raw.githubusercontent.com/upshiftbe/email-signature/refs/heads/main/src/assets';
+export const DEFAULT_LOGO_URL = `${RAW_ASSET_BASE}/upshift_logo.png`;
+
 export const PREFILL_VALUES: Record<FormField['id'], string> = {
   'input-facebook': 'https://www.facebook.com/upshiftbe',
   'input-linkedin': 'https://www.linkedin.com/company/37812214/admin/dashboard/',
+  'input-logo-url': DEFAULT_LOGO_URL,
 };
 
 export const STORAGE_KEY = 'signatureBuilderState';
-
-export const RAW_ASSET_BASE = 'https://raw.githubusercontent.com/upshiftbe/email-signature/refs/heads/main/src/assets';

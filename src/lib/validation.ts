@@ -18,6 +18,26 @@ const urlSchema = z
   )
   .optional();
 
+const EMAIL_FOOTER_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif'];
+
+const logoUrlSchema = urlSchema.refine(
+  (val) => {
+    if (!val || !val.trim()) {
+      return true;
+    }
+
+    try {
+      const normalized = val.startsWith('http://') || val.startsWith('https://') ? val : `https://${val}`;
+      const url = new URL(normalized);
+      const pathname = url.pathname.toLowerCase();
+      return EMAIL_FOOTER_IMAGE_EXTENSIONS.some((extension) => pathname.endsWith(extension));
+    } catch {
+      return false;
+    }
+  },
+  { message: 'Logo URL must point to a PNG, JPEG, or GIF file' }
+);
+
 // Email validation helper
 const emailSchema = z
   .string()
@@ -41,6 +61,7 @@ export const formSchema = z.object({
   'input-email': emailSchema,
   'input-locatie-1': z.string().max(500, 'Location is too long (max 500 characters)'),
   'input-locatie-2': z.string().max(500, 'Location is too long (max 500 characters)').optional(),
+  'input-logo-url': logoUrlSchema,
   'input-facebook': urlSchema,
   'input-linkedin': urlSchema,
   'input-instagram': urlSchema,

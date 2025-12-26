@@ -26,4 +26,5 @@ export type TrimmedValues = {
   facebook: string;
   linkedin: string;
   instagram: string;
+  logoUrl: string;
 };

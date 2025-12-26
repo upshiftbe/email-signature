@@ -131,6 +131,7 @@ export function useFormState() {
       facebook: getValue('input-facebook'),
       linkedin: getValue('input-linkedin'),
       instagram: getValue('input-instagram'),
+      logoUrl: getValue('input-logo-url'),
     };
   }, [formState]);
 
