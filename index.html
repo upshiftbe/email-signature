@@ -5,33 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://www.googletagmanager.com; frame-src 'self' https://www.googletagmanager.com;"
     />
-    <meta name="description" content="Free email signature builder with live preview, Upshift branding, and one-click copy for clean footers." />
+    <meta
+      name="description"
+      content="Free email signature builder with live preview, Upshift branding, and one-click copy for clean footers."
+    />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-5PS9ZTNS');</script>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-5PS9ZTNS');
+    </script>
     <!-- End Google Tag Manager -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <title>Email Signature Builder | Upshift</title>
     <meta property="og:title" content="Free Upshift Email Signature Builder" />
-    <meta property="og:description" content="Build and download a free Upshift-branded email signature with editable contact info, social links, and live preview." />
+    <meta
+      property="og:description"
+      content="Build and download a free Upshift-branded email signature with editable contact info, social links, and live preview."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://email-signature.upshift.be" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/upshiftbe/email-signature/main/src/assets/upshift_logo.png" />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/upshiftbe/email-signature/main/src/assets/upshift_logo.png"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Free Upshift Email Signature Builder" />
-    <meta name="twitter:description" content="Create a free email signature with Upshift branding, editable links, and an instant preview." />
+    <meta
+      name="twitter:description"
+      content="Create a free email signature with Upshift branding, editable links, and an instant preview."
+    />
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5PS9ZTNS"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-5PS9ZTNS"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

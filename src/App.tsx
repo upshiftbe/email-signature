@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFormState } from './hooks/useFormState';
 import { useClipboard } from './hooks/useClipboard';
 import { AppHeader } from './components/AppHeader';
@@ -7,9 +7,39 @@ import { AppFooter } from './components/AppFooter';
 import { SignatureForm } from './components/SignatureForm';
 import { SignaturePreview } from './components/SignaturePreview';
 
+const CONSENT_COOKIE_NAME = 'emailSignatureConsent';
+
+function getConsentCookie(): 'accepted' | 'rejected' | null {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  const cookie = document.cookie
+    .split(';')
+    .map((segment) => segment.trim())
+    .find((segment) => segment.startsWith(`${CONSENT_COOKIE_NAME}=`));
+
+  if (!cookie) {
+    return null;
+  }
+
+  const [, value] = cookie.split('=');
+  return value === 'accepted' || value === 'rejected' ? (value as 'accepted' | 'rejected') : null;
+}
+
+function setConsentCookie(value: 'accepted' | 'rejected') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  const maxAge = 60 * 60 * 24 * 365;
+  document.cookie = `${CONSENT_COOKIE_NAME}=${value}; path=/; max-age=${maxAge};`;
+}
+
 function App() {
   const { formState, trimmedValues, updateField, setFieldTouched, resetForm, hydrated, errors } = useFormState();
   const { previewRef, copySignature } = useClipboard();
+  const [consent, setConsent] = useState<'accepted' | 'rejected' | null>(() => getConsentCookie());
 
   const handleFieldChange = useCallback(
     (id: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +54,24 @@ function App() {
     },
     [setFieldTouched]
   );
+
+  useEffect(() => {
+    if (consent === null) {
+      setConsent(getConsentCookie());
+    }
+  }, [consent]);
+
+  const handleConsentDecision = useCallback((value: 'accepted' | 'rejected') => {
+    setConsentCookie(value);
+    setConsent(value);
+
+    if (value === 'accepted' && typeof window !== 'undefined') {
+      const dl = (window as Window & { dataLayer?: unknown }).dataLayer;
+      if (Array.isArray(dl)) {
+        dl.push({ event: 'consent_granted' });
+      }
+    }
+  }, []);
 
   // Don't render until hydrated to avoid hydration mismatches
   if (!hydrated) {
@@ -63,6 +111,29 @@ function App() {
         </div>
         <AppFooter />
       </div>
+      {consent === null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-3xl rounded-3xl bg-white/95 p-8 text-slate-900 shadow-2xl backdrop-blur">
+            <p className="text-base leading-relaxed">We use cookies to improve our free email signature builder.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                className="cursor-pointer rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold tracking-wider text-white uppercase transition hover:bg-emerald-500"
+                type="button"
+                onClick={() => handleConsentDecision('accepted')}
+              >
+                Allow cookies
+              </button>
+              <button
+                className="cursor-pointer rounded-full border border-slate-300 px-6 py-2 text-sm font-semibold tracking-wider text-slate-700 uppercase transition hover:bg-slate-50"
+                type="button"
+                onClick={() => handleConsentDecision('rejected')}
+              >
+                Reject cookies
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
