@@ -22,9 +22,6 @@ export function FormField({ field, value, error, onChange, onBlur }: FormFieldPr
       <FieldLabel htmlFor={field.id}>{field.label}</FieldLabel>
       {isWebsite || isPhone || isEmail ? (
         <InputGroup>
-          <InputGroupAddon>
-            <InputGroupText>{isWebsite ? 'https://' : isPhone ? '+' : '@'}</InputGroupText>
-          </InputGroupAddon>
           <div className="flex-1">
             <Input
               id={field.id}
