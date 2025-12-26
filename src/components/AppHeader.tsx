@@ -12,8 +12,10 @@ export function AppHeader() {
         <div className="space-y-1">
           <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">Email signature builder</h1>
           <p className="max-w-3xl text-base text-slate-600">
-            Fill in the left column and preview your live email signature on the right. Everything stays synced with the
-            URL for easy sharing.
+            Fill in the form and preview your live email signature on the right.
+          </p>
+          <p className="max-w-3xl text-base text-slate-600">
+            Everything stays synced with the URL for easy sharing.
           </p>
         </div>
       </div>
