@@ -20,6 +20,15 @@ export function AppFooter() {
             Upshift
           </a>
         </span>
+        <span className="text-xs text-slate-400 sm:text-left">
+          Bugs? Drop a note at{' '}
+          <a
+            href="mailto:hello@upshift.be"
+            className="font-semibold text-emerald-600 transition-colors hover:text-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
+          >
+            hello@upshift.be
+          </a>
+        </span>
       </div>
     </footer>
   );
