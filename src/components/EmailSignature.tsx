@@ -287,30 +287,32 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                       >
                         <tbody>
                           <tr>
-                            {[
-                              {
-                                id: 'facebook',
-                                icon: 'facebook.png',
-                                href: values.facebook,
-                              },
-                              {
-                                id: 'linkedin',
-                                icon: 'linkedin.png',
-                                href: values.linkedin,
-                              },
-                              {
-                                id: 'instagram',
-                                icon: 'instagram.png',
-                                href: values.instagram,
-                              },
-                            ]
+                            {(
+                              [
+                                {
+                                  id: 'facebook',
+                                  icon: 'facebook.png',
+                                  href: values.facebook,
+                                },
+                                {
+                                  id: 'linkedin',
+                                  icon: 'linkedin.png',
+                                  href: values.linkedin,
+                                },
+                                {
+                                  id: 'instagram',
+                                  icon: 'instagram.png',
+                                  href: values.instagram,
+                                },
+                              ] as const
+                            )
                               .map((social) => ({
                                 ...social,
                                 href: sanitizeUrl(social.href),
                               }))
                               .filter((social) => social.href)
-                              .map((social) => (
-                                <td key={social.id}>
+                              .map((social, index) => (
+                                <td key={social.id} style={{ paddingLeft: index === 0 ? 0 : 8 }}>
                                   <a
                                     id={`link-${social.id}`}
                                     href={social.href}

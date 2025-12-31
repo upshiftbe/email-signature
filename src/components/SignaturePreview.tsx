@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { RefObject } from 'react';
 import { Button, Card, CardContent, CardFooter } from './ui';
 import { EmailSignature } from './EmailSignature';
@@ -14,6 +14,8 @@ type SignaturePreviewProps = {
 export function SignaturePreview({ values, previewRef, onReset, onCopy }: SignaturePreviewProps) {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+  const [shareMessage, setShareMessage] = useState<string>('');
 
   const handleCopy = async () => {
     const result = await onCopy();
@@ -31,6 +33,52 @@ export function SignaturePreview({ values, previewRef, onReset, onCopy }: Signat
     setErrorMessage('');
     onReset();
   };
+
+  const copyTextToClipboard = useCallback(async (text: string) => {
+    if (typeof navigator !== 'undefined' && typeof navigator.clipboard?.writeText === 'function') {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      return document.execCommand('copy');
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    setShareStatus('idle');
+    setShareMessage('');
+
+    if (typeof window === 'undefined') {
+      setShareStatus('error');
+      setShareMessage('Clipboard not available');
+      return;
+    }
+
+    const copied = await copyTextToClipboard(window.location.href);
+    if (copied) {
+      setShareStatus('copied');
+      setShareMessage('Link copied to clipboard');
+      return;
+    }
+
+    setShareStatus('error');
+    setShareMessage('Unable to copy link');
+  }, [copyTextToClipboard]);
 
   return (
     <Card className="bg-slate-900 text-white shadow-2xl shadow-slate-900/40 lg:sticky lg:top-10">
@@ -99,11 +147,17 @@ export function SignaturePreview({ values, previewRef, onReset, onCopy }: Signat
       <CardFooter className="flex flex-col gap-2 pt-0">
         <Button
           type="button"
-          className="w-full border border-slate-700 bg-transparent text-slate-200 hover:border-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
-          onClick={handleReset}
+          className="w-full cursor-pointer bg-slate-800/80 text-white hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"
+          onClick={handleShare}
         >
-          Reset form
+          Share signature
         </Button>
+        {shareStatus === 'copied' && (
+          <p className="px-1 text-xs text-emerald-400">{shareMessage}</p>
+        )}
+        {shareStatus === 'error' && (
+          <p className="px-1 text-xs text-rose-400">{shareMessage}</p>
+        )}
         <Button
           type="button"
           className="w-full cursor-pointer bg-emerald-600 text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/70"

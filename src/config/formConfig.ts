@@ -8,7 +8,7 @@ export const FORM_FIELDS: FormField[] = [
     label: 'Logo URL',
     placeholder: 'https://assets.example.com/logo.png',
     type: 'url',
-    hint: 'Optional HTTPS image that appears next to your info.',
+    hint: 'Optional image that appears next to your info.',
   },
   { id: 'input-gsm', label: 'Phone', placeholder: '+32 470 01 23 45' },
   { id: 'input-email', label: 'Email', placeholder: 'hello@upshift.be' },
@@ -21,7 +21,7 @@ export const FORM_FIELDS: FormField[] = [
     id: 'input-locatie-2',
     label: 'Location',
     placeholder: 'België',
-    hint: 'Optional extra address line.'
+    hint: 'Optional extra address line.',
   },
   {
     id: 'input-facebook',
@@ -40,14 +40,14 @@ export const FORM_FIELDS: FormField[] = [
   {
     id: 'input-instagram',
     label: 'Instagram URL',
-    placeholder: 'https://instagram.com/company',
+    placeholder: 'https://www.instagram.com/upshift.be',
     type: 'url',
     hint: 'Optional, the Instagram icon only appears once this is set.',
   },
   {
     id: 'input-website',
     label: 'Website URL',
-    placeholder: 'https://company.com',
+    placeholder: 'https://upshift.be',
     type: 'url',
   },
 ];
@@ -60,7 +60,7 @@ export const FORM_GROUPS: FormGroup[] = [
   },
   {
     title: 'Branding',
-    description: 'A hosted logo is required so it\'s not send as an attachment each time.',
+    description: 'Paste the link to your logo from your website or image hosting platform.',
     fieldIds: ['input-logo-url'],
   },
   {
@@ -94,6 +94,7 @@ export const DEFAULT_LOGO_URL = `${RAW_ASSET_BASE}/upshift_logo.png`;
 export const PREFILL_VALUES: Record<FormField['id'], string> = {
   'input-facebook': 'https://www.facebook.com/upshiftbe',
   'input-linkedin': 'https://www.linkedin.com/company/upshift-be',
+  'input-instagram': 'https://www.instagram.com/upshift.be',
   'input-logo-url': DEFAULT_LOGO_URL,
 };
 

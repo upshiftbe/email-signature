@@ -1,6 +1,6 @@
 export function AppHeader() {
   return (
-    <header className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white/80 p-6 shadow-lg shadow-emerald-200/50 backdrop-blur">
+    <header className="flex flex-col gap-4 rounded-3xl border border-slate-100 bg-white/80 p-6 shadow-lg shadow-slate-200/70 backdrop-blur">
       <div className="flex items-center gap-3 text-sm font-semibold text-emerald-700">
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm shadow-emerald-400/50">
           <span>U</span>
