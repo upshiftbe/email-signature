@@ -1,6 +1,6 @@
 import type { TrimmedValues } from '../types';
 import { RAW_ASSET_BASE } from '../config/formConfig';
-import { sanitizeUrl, sanitizePhone, sanitizeEmail, escapeHtml } from '../lib/security';
+import { sanitizeUrl, sanitizePhone, sanitizeEmail } from '../lib/security';
 
 type EmailSignatureProps = {
   values: TrimmedValues;
@@ -46,7 +46,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                           color: '#181127',
                         }}
                       >
-                        <span id="footer-naam">{escapeHtml(values.name)}</span>
+                        <span id="footer-naam">{values.name}</span>
                       </h3>
                       <p
                         style={{
@@ -56,7 +56,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                           color: '#181127',
                         }}
                       >
-                        <span id="footer-functie">{escapeHtml(values.role)}</span>
+                        <span id="footer-functie">{values.role}</span>
                       </p>
                     </td>
                     <td
@@ -102,7 +102,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                   color: '#181127',
                                 }}
                               >
-                                <span id="footer-gsm">{escapeHtml(values.phone)}</span>
+                                <span id="footer-gsm">{values.phone}</span>
                               </a>
                             </td>
                           </tr>
@@ -140,7 +140,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                   color: '#181127',
                                 }}
                               >
-                                <span id="footer-email">{escapeHtml(values.email)}</span>
+                                <span id="footer-email">{values.email}</span>
                               </a>
                             </td>
                           </tr>
@@ -182,7 +182,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                   }}
                                 >
                                   <span id="footer-website">
-                                    {escapeHtml(values.websiteLabel || values.websiteUrl)}
+                                    {values.websiteLabel || values.websiteUrl}
                                   </span>
                                 </a>
                               </td>
@@ -214,7 +214,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                 fontSize: 12,
                               }}
                             >
-                              <span id="footer-locatie-1">{escapeHtml(values.location1)}</span>
+                              <span id="footer-locatie-1">{values.location1}</span>
                             </td>
                           </tr>
                           {values.location2 && (
@@ -237,7 +237,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                                   fontSize: 12,
                                 }}
                               >
-                                <span id="footer-locatie-2">{escapeHtml(values.location2)}</span>
+                                <span id="footer-locatie-2">{values.location2}</span>
                               </td>
                             </tr>
                           )}
