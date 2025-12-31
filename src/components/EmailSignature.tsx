@@ -21,23 +21,23 @@ export function EmailSignature({ values }: EmailSignatureProps) {
         color: '#181127',
       }}
     >
-      <table
-        cellPadding={0}
-        cellSpacing={0}
-        style={{
-          width: '100%',
-          fontFamily: 'inherit',
-          fontSize: 'inherit',
-          borderCollapse: 'collapse',
-        }}
-      >
+        <table
+          cellPadding={0}
+          cellSpacing={0}
+          style={{
+            width: '450px',
+            fontFamily: 'inherit',
+            fontSize: 'inherit',
+            borderCollapse: 'collapse',
+          }}
+        >
         <tbody>
           <tr>
             <td>
               <table cellPadding={0} cellSpacing={0} style={{ width: '100%' }}>
                 <tbody>
                   <tr>
-                    <td style={{ verticalAlign: 'middle' }}>
+                    <td style={{ verticalAlign: 'middle', width: '50%' }}>
                       <h3
                         style={{
                           margin: 0,
@@ -62,6 +62,7 @@ export function EmailSignature({ values }: EmailSignatureProps) {
                     <td
                       style={{
                         verticalAlign: 'middle',
+                        width: '50%',
                         borderLeft: '1px solid #283e89',
                         paddingLeft: 16,
                       }}
